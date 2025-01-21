@@ -6,7 +6,7 @@ const routes = require('./routes/routes');
 const cors=require('cors')
 const app = express();
 
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['*'];
 const corsOptions = {
     origin: function (origin, callback) {
       // Allow requests from the allowed origins
