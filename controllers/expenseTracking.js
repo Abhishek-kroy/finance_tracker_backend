@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Budget = require('../models/budgetModel');
 const Expense = require('../models/expenseModel');
 
@@ -50,7 +51,7 @@ const addExpense = async (req, res) => {
             budgetId: budget._id, // Use the ID of the created or updated budget
             amount: amountSpentInt,
             date: date || new Date(), // Use provided date or the current date
-            name: name || 'Expense',
+            description: name
         });
 
         // Save the new expense
@@ -112,6 +113,11 @@ const getExpensesForUserBudget = async (req, res) => {
 
 const getExpensesGroupedByDateAndBudget = async (userId) => {
     try {
+        // Validate the userId format
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new Error("Invalid user ID format");
+        }
+
         const expenses = await Expense.aggregate([
             { $match: { userId: mongoose.Types.ObjectId(userId) } }, // Match user ID
             {
@@ -129,7 +135,7 @@ const getExpensesGroupedByDateAndBudget = async (userId) => {
                     as: 'budgetInfo',
                 },
             },
-            { $unwind: "$budgetInfo" }, // Flatten budget details
+            { $unwind: { path: "$budgetInfo", preserveNullAndEmptyArrays: true } }, // Flatten budget details
             {
                 $project: {
                     date: "$_id.date",
@@ -147,6 +153,60 @@ const getExpensesGroupedByDateAndBudget = async (userId) => {
     }
 };
 
+const getBudgetWithExpenses = async (req, res) => {
+    try {
+        // Check if user is authenticated and has a valid userId
+        if (!req.user || !req.user.userId) {
+            return res.status(401).json({ error: 'Unauthorized access, user not logged in' });
+        }
+
+        const userId = req.user.userId; // Assuming you have user authentication and `req.user` contains the logged-in user's data
+
+        // Perform aggregation to get budgets with their associated expenses
+        const budgetsWithExpenses = await Budget.aggregate([
+            {
+                $match: { userId: new mongoose.Types.ObjectId(userId) } // Ensure 'new' is used correctly if needed
+            },
+            {
+                $lookup: {
+                    from: 'expenses', // Collection name for the Expense model
+                    localField: '_id', // Field in the Budget model
+                    foreignField: 'budgetId', // Field in the Expense model
+                    as: 'expenses' // The resulting array of expenses
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    amount: 1,
+                    spentAmount: 1,
+                    startDate: 1,
+                    endDate: 1,
+                    expenses: 1
+                }
+            }
+        ]);
+
+        // If no budgets are found, return an appropriate message
+        if (budgetsWithExpenses.length === 0) {
+            return res.status(404).json({ message: 'No budgets found for the user' });
+        }
+
+        // Return the budgets along with their expenses
+        // console.log(budgetsWithExpenses);
+        return res.status(200).json({
+            message: 'Budgets fetched successfully',
+            budgets: budgetsWithExpenses,
+        });
+    } catch (error) {
+        console.error('Error fetching budgets with expenses:', error);
+
+        // Send a detailed error message to the client
+        return res.status(500).json({ error: 'Failed to fetch data due to internal server error' });
+    }
+};
 
 
-module.exports = { addExpense, getExpensesForUserBudget, getExpensesGroupedByDateAndBudget };
+
+module.exports = { addExpense, getExpensesForUserBudget, getExpensesGroupedByDateAndBudget, getBudgetWithExpenses };
