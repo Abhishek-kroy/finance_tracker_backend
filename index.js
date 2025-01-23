@@ -7,7 +7,7 @@ const cors = require('cors')
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:3000/','https://financetrackerforproject.netlify.app/'], // Allow any origin for testing/development purposes
+  origin:'*', // Allow any origin for testing/development purposes
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
 };
