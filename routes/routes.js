@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser } = require('../controllers/userController');
+const { registerUser,sendOtp, verifyOtp, loginUser } = require('../controllers/userController');
 const {createBudget, monthBudget, rangeBudget} = require('../controllers/budgetController');
 const {addExpense, getExpensesForUserBudget, getExpensesGroupedByDateAndBudget, getBudgetWithExpenses} = require('../controllers/expenseTracking')
 const { authenticateUser } = require('../middlewares/authenticateUser');
@@ -8,6 +8,10 @@ const router = express.Router();
 
 // POST /api/users/register - Register a new user
 router.post('/register', registerUser);
+
+
+router.post('/sendOtp', sendOtp);
+router.post('/verifyOtp',verifyOtp);
 
 // POST /api/users/login - Login user
 router.post('/login', loginUser);
