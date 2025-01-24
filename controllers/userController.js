@@ -51,6 +51,7 @@ const transporter = nodemailer.createTransport({
 
 const sendOtp = async (req, res) => {
     try {
+        console.log("sending otp");
         const { email } = req.body;
 
         if (!email) {
