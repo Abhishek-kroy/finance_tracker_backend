@@ -3,7 +3,7 @@ const Budget = require('../models/budgetModel.js'); // Assuming a Budget model e
 // Controller to create a budget
 const createBudget = async (req, res) => {
     try {
-        const { name, amount, startDate, endDate } = req.body;
+        const { name, amount, startDate, endDate, description } = req.body;
         const userId = req.user.userId;
 
         // Validate required fields
@@ -15,7 +15,7 @@ const createBudget = async (req, res) => {
         if (new Date(startDate) > new Date(endDate)) {
             return res.status(400).json({ success: false, message: 'Start date cannot be later than the end date.' });
         }
-        
+
         // Save budget to database
         const newBudget = await Budget.create({
             userId,
@@ -23,6 +23,7 @@ const createBudget = async (req, res) => {
             amount,
             startDate,
             endDate,
+            description: description || '', // Default to empty string if not provided
         });
 
         res.status(201).json({ success: true, message: 'Budget created successfully.', budget: newBudget });

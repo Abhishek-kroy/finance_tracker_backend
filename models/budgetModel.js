@@ -19,7 +19,7 @@ const budgetSchema = new mongoose.Schema({
   spentAmount: {
     type: Number,
     default: 0,
-   },
+  },
   startDate: {
     type: Date,
     required: true,
@@ -27,6 +27,11 @@ const budgetSchema = new mongoose.Schema({
   endDate: {
     type: Date,
     required: true,
+  },
+  description: {
+    type: String,
+    trim: true,
+    default: '',
   },
 }, { timestamps: true });
 
