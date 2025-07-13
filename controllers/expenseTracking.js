@@ -194,7 +194,6 @@ const getBudgetWithExpenses = async (req, res) => {
         }
 
         // Return the budgets along with their expenses
-        // console.log(budgetsWithExpenses);
         return res.status(200).json({
             message: 'Budgets fetched successfully',
             budgets: budgetsWithExpenses,
@@ -206,7 +205,5 @@ const getBudgetWithExpenses = async (req, res) => {
         return res.status(500).json({ error: 'Failed to fetch data due to internal server error' });
     }
 };
-
-
 
 module.exports = { addExpense, getExpensesForUserBudget, getExpensesGroupedByDateAndBudget, getBudgetWithExpenses };

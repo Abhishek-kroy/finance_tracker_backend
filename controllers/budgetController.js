@@ -63,6 +63,9 @@ const rangeBudget = async (req, res) => {
             endDate: { $gte: new Date(startDate) },
         });
 
+
+        console.log(budgets);
+
         res.json({ success: true, budgets:budgets });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Error fetching budgets.' });
