@@ -17,6 +17,7 @@ router.post('/verifyOtp',verifyOtp);
 router.post('/login', loginUser);
 
 router.post('/create', authenticateUser, createBudget);
+
 router.get('/budgets/current-month', authenticateUser, monthBudget);
 router.get('/budgets/range', authenticateUser, rangeBudget);
 
