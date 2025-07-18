@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
         // Create a new user with hashed password
         const newUser = await User.create({
             name,
-            email,
+            email:email.toLowerCase(),
             password: hashedPassword,
         });
 
@@ -167,7 +167,7 @@ const loginUser = async (req, res) => {
             return res.status(403).json({ success: false, message: "reCAPTCHA verification failed!" });
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(401).json({ success: false, message: "Invalid email or password!" });
         }
